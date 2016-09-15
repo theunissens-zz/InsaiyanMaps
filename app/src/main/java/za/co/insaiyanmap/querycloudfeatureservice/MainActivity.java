@@ -16,8 +16,6 @@ import com.esri.core.geometry.Envelope;
 import com.esri.core.geometry.Geometry;
 import com.esri.core.geometry.Point;
 import com.esri.core.geometry.Polyline;
-import com.esri.core.io.OnSelfSignedCertificateListener;
-import com.esri.core.io.SelfSignedCertificateHandler;
 import com.esri.core.map.Feature;
 import com.esri.core.map.FeatureResult;
 import com.esri.core.map.Graphic;
@@ -26,23 +24,22 @@ import com.esri.core.symbol.SimpleMarkerSymbol;
 import com.esri.core.tasks.query.QueryParameters;
 import com.esri.core.tasks.query.QueryTask;
 
-import java.security.cert.X509Certificate;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+
+import za.co.insaiyanmap.querycloudfeatureservice.objects.LayerObject;
 
 public class MainActivity extends AppCompatActivity {
 
-    MenuItem mQueryUsMenuItem = null;
-    MenuItem mQueryCaMenuItem = null;
-    MenuItem mQueryFrMenuItem = null;
-    MenuItem mQueryAuMenuItem = null;
-    MenuItem mQueryBrMenuItem = null;
+    MenuItem mQueryMenuItem = null;
 
     MapView mMapView;
-    ArcGISFeatureLayer streetLightFeatureLayer;
-    ArcGISFeatureLayer slfeederFeatureLayer;
-    GraphicsLayer streetLightGraphicsLayer;
-    GraphicsLayer slfeederGraphicsLayer;
-    String streetLightURL;
-    String SLFeederURL;
+//    ArcGISFeatureLayer streetLightFeatureLayer;
+//    ArcGISFeatureLayer slfeederFeatureLayer;
+    GraphicsLayer graphicsLayer;
+    private Map<String, String> mapLayers;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,32 +49,34 @@ public class MainActivity extends AppCompatActivity {
         // Retrieve the map and initial extent from XML layout
         mMapView = (MapView) findViewById(R.id.map);
         // Get the feature service URL from values->strings.xml
-        streetLightURL = this.getResources().getString(R.string.StreetLightURL);
-        SLFeederURL = this.getResources().getString(R.string.SLFeederURL);
         // Add Feature layer to the MapView
-        streetLightFeatureLayer = new ArcGISFeatureLayer(streetLightURL, ArcGISFeatureLayer.MODE.ONDEMAND);
-        slfeederFeatureLayer = new ArcGISFeatureLayer(SLFeederURL, ArcGISFeatureLayer.MODE.ONDEMAND);
+//        streetLightFeatureLayer = new ArcGISFeatureLayer(streetLightURL, ArcGISFeatureLayer.MODE.ONDEMAND);
+//        slfeederFeatureLayer = new ArcGISFeatureLayer(SLFeederURL, ArcGISFeatureLayer.MODE.ONDEMAND);
 
-        GroupLayer groupsLayer = new GroupLayer();
-        groupsLayer.addLayer(streetLightFeatureLayer);
-        groupsLayer.addLayer(slfeederFeatureLayer);
+//        GroupLayer groupsLayer = new GroupLayer();
+//        groupsLayer.addLayer(streetLightFeatureLayer);
+//        groupsLayer.addLayer(slfeederFeatureLayer);
 //        mMapView.addLayer(groupsLayer);
 
-        streetLightGraphicsLayer = new GraphicsLayer();
-        slfeederGraphicsLayer = new GraphicsLayer();
+//        GroupLayer groupGraphicsLayer = new GroupLayer();
+//        groupGraphicsLayer.addLayer(streetLightGraphicsLayer);
+//        groupGraphicsLayer.addLayer(slfeederGraphicsLayer);
+        graphicsLayer = new GraphicsLayer();
+        mMapView.addLayer(graphicsLayer);
 
-
-        GroupLayer groupGraphicsLayer = new GroupLayer();
-        groupGraphicsLayer.addLayer(streetLightGraphicsLayer);
-        groupGraphicsLayer.addLayer(slfeederGraphicsLayer);
-        mMapView.addLayer(streetLightGraphicsLayer);
-
+        // Add all the feature layers
         Resources res = getResources();
         String[] layers = res.getStringArray(R.array.esriLayers);
-//        GraphicsLayer[] graphicsLayers = new GraphicsLayer[layers.length];
-        for (int i = 0; i < layers.length; i++) {
+        mapLayers = new HashMap<>();
+        for (int i = 0; i < 3; i++) {
             String name = layers[i].split(";")[0];
             String url = layers[i].split(";")[1];
+            mapLayers.put(name, url);
+//            layersObjs.add(new LayerObject(name, url));
+
+            ArcGISFeatureLayer layer = new ArcGISFeatureLayer(url, ArcGISFeatureLayer.MODE.ONDEMAND);
+
+            mMapView.addLayer(layer);
         }
     }
 
@@ -87,11 +86,7 @@ public class MainActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.menu_main, menu);
 
         // Get the query params menu items.
-        mQueryUsMenuItem = menu.getItem(0);
-        mQueryCaMenuItem = menu.getItem(1);
-        mQueryFrMenuItem = menu.getItem(2);
-        mQueryAuMenuItem = menu.getItem(3);
-        mQueryBrMenuItem = menu.getItem(4);
+        mQueryMenuItem = menu.getItem(0);
         return true;
     }
 
@@ -99,10 +94,12 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle menu item selection.
         switch (item.getItemId()) {
-            case R.id.Query_US:
-                mQueryUsMenuItem.setChecked(true);
-                new QueryFeatureLayer().execute("StreetLight");
-                new QueryFeatureLayer().execute("SLFeeder");
+            case R.id.Query_Load:
+                mQueryMenuItem.setChecked(true);
+                Object[] keys = mapLayers.keySet().toArray();
+                for (int i = 0; i < keys.length; i++) {
+                    new QueryFeatureLayer().execute(keys[i].toString());
+                }
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -113,45 +110,64 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected FeatureResult doInBackground(String... params) {
 
-            if (params[0].equals("StreetLight")) {
-                String whereClause = "SL_AssClass='INFRASTRUCTURE_AND_PLANNING'";
+            String url = mapLayers.get(params[0]);
 
-                // Define a new query and set parameters
-                QueryParameters mParams = new QueryParameters();
-                mParams.setWhere(whereClause);
-                mParams.setReturnGeometry(true);
+            // Define a new query and set parameters
+            QueryParameters mParams = new QueryParameters();
+            mParams.setWhere("1 = 1");
+            mParams.setReturnGeometry(true);
 
-                // Define the new instance of QueryTask
-                QueryTask queryTask = new QueryTask(streetLightURL);
-                FeatureResult results;
+            // Define the new instance of QueryTask
+            QueryTask queryTask = new QueryTask(url);
+            FeatureResult results;
 
-                try {
-                    // run the querytask
-                    results = queryTask.execute(mParams);
-                    return results;
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            } else if (params[0].equals("SLFeeder")) {
-                String whereClause = "SLC_AssClass='INFRASTRUCTURE_AND_PLANNING'";
-
-                // Define a new query and set parameters
-                QueryParameters mParams = new QueryParameters();
-                mParams.setWhere(whereClause);
-                mParams.setReturnGeometry(true);
-
-                // Define the new instance of QueryTask
-                QueryTask queryTask = new QueryTask(SLFeederURL);
-                FeatureResult results;
-
-                try {
-                    // run the querytask
-                    results = queryTask.execute(mParams);
-                    return results;
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+            try {
+                // run the querytask
+                results = queryTask.execute(mParams);
+                return results;
+            } catch (Exception e) {
+                e.printStackTrace();
             }
+
+//            if (params[0].equals("StreetLight")) {
+//                String whereClause = "SL_AssClass='INFRASTRUCTURE_AND_PLANNING'";
+//
+//                // Define a new query and set parameters
+//                QueryParameters mParams = new QueryParameters();
+//                mParams.setWhere(whereClause);
+//                mParams.setReturnGeometry(true);
+//
+//                // Define the new instance of QueryTask
+//                QueryTask queryTask = new QueryTask(streetLightURL);
+//                FeatureResult results;
+//
+//                try {
+//                    // run the querytask
+//                    results = queryTask.execute(mParams);
+//                    return results;
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//            } else if (params[0].equals("SLFeeder")) {
+//                String whereClause = "SLC_AssClass='INFRASTRUCTURE_AND_PLANNING'";
+//
+//                // Define a new query and set parameters
+//                QueryParameters mParams = new QueryParameters();
+//                mParams.setWhere(whereClause);
+//                mParams.setReturnGeometry(true);
+//
+//                // Define the new instance of QueryTask
+//                QueryTask queryTask = new QueryTask(SLFeederURL);
+//                FeatureResult results;
+//
+//                try {
+//                    // run the querytask
+//                    results = queryTask.execute(mParams);
+//                    return results;
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//            }
 
             return null;
         }
@@ -176,11 +192,11 @@ public class MainActivity extends AppCompatActivity {
                         SimpleMarkerSymbol point = new SimpleMarkerSymbol(Color.BLUE, 8, SimpleMarkerSymbol.STYLE.CIRCLE);
                         Graphic graphic = new Graphic(feature.getGeometry(), point, feature.getAttributes(), 2);
                         extent.merge((Point) graphic.getGeometry());
-                        streetLightGraphicsLayer.addGraphic(graphic);
+                        graphicsLayer.addGraphic(graphic);
                     } else if (geom instanceof Polyline){
                         Graphic graphic = new Graphic(feature.getGeometry(), new SimpleLineSymbol(Color.RED, 2), feature.getAttributes(), 1);
 //                        extent.mer((Polyline) graphic.getGeometry());
-                        streetLightGraphicsLayer.addGraphic(graphic);
+                        graphicsLayer.addGraphic(graphic);
                     }
                 }
             }
