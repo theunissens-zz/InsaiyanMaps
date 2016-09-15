@@ -1,4 +1,40 @@
 <resources>
-    <string name="app_name">InsaiyanMap</string>
-    <string name="title_activity_maps">Map</string>
+    <string name="app_name">"QueryCloudFeatureService "</string>
+    <string-array name="esriLayers">
+        <item>StreetLight;https://gis.overstrand.gov.za/newgis/rest/services/IMQS/Electricity/FeatureServer/0</item>
+        <item>SLFeeder;https://gis.overstrand.gov.za/newgis/rest/services/IMQS/Electricity/FeatureServer/0</item>
+        <item>MVSwitchingStation;https://gis.overstrand.gov.za/newgis/rest/services/IMQS/Electricity/FeatureServer/0</item>
+        <item>MVAutoRecloser;https://gis.overstrand.gov.za/newgis/rest/services/IMQS/Electricity/FeatureServer/0</item>
+        <item>MVSectionaliser;https://gis.overstrand.gov.za/newgis/rest/services/IMQS/Electricity/FeatureServer/0</item>
+        <item>MVRingMainUnit;https://gis.overstrand.gov.za/newgis/rest/services/IMQS/Electricity/FeatureServer/0</item>
+        <item>MiniSubstation;https://gis.overstrand.gov.za/newgis/rest/services/IMQS/Electricity/FeatureServer/0</item>
+        <item>MVTransformer;https://gis.overstrand.gov.za/newgis/rest/services/IMQS/Electricity/FeatureServer/0</item>
+        <item>BulkMeteringUnit;https://gis.overstrand.gov.za/newgis/rest/services/IMQS/Electricity/FeatureServer/0</item>
+        <item>LVDistKiosk;https://gis.overstrand.gov.za/newgis/rest/services/IMQS/Electricity/FeatureServer/0</item>
+        <item>Pole;https://gis.overstrand.gov.za/newgis/rest/services/IMQS/Electricity/FeatureServer/0</item>
+        <item>Joints;https://gis.overstrand.gov.za/newgis/rest/services/IMQS/Electricity/FeatureServer/0</item>
+        <item>Pumpstation;https://gis.overstrand.gov.za/newgis/rest/services/IMQS/Electricity/FeatureServer/0</item>
+        <item>Generator;https://gis.overstrand.gov.za/newgis/rest/services/IMQS/Electricity/FeatureServer/0</item>
+        <item>MVFeeder;https://gis.overstrand.gov.za/newgis/rest/services/IMQS/Electricity/FeatureServer/0</item>
+        <item>LVFeeder;https://gis.overstrand.gov.za/newgis/rest/services/IMQS/Electricity/FeatureServer/0</item>
+        <item>ServiceConnection;https://gis.overstrand.gov.za/newgis/rest/services/IMQS/Electricity/FeatureServer/0</item>
+        <item>LVHighMastLighting-Private;https://gis.overstrand.gov.za/newgis/rest/services/IMQS/Electricity/FeatureServer/0</item>
+        <item>StreetLight-Private;https://gis.overstrand.gov.za/newgis/rest/services/IMQS/Electricity/FeatureServer/0</item>
+        <item>SLFeeder-Private;https://gis.overstrand.gov.za/newgis/rest/services/IMQS/Electricity/FeatureServer/0</item>
+        <item>MVSwitchingStation-Private;https://gis.overstrand.gov.za/newgis/rest/services/IMQS/Electricity/FeatureServer/0</item>
+        <item>MVAutoRecloser-Private;https://gis.overstrand.gov.za/newgis/rest/services/IMQS/Electricity/FeatureServer/0</item>
+        <item>MVSectionaliser-Private;https://gis.overstrand.gov.za/newgis/rest/services/IMQS/Electricity/FeatureServer/0</item>
+        <item>MVRingMainUnit-Private;https://gis.overstrand.gov.za/newgis/rest/services/IMQS/Electricity/FeatureServer/0</item>
+        <item>MiniSubstation-Private;https://gis.overstrand.gov.za/newgis/rest/services/IMQS/Electricity/FeatureServer/0</item>
+        <item>MVTransformer-Private;https://gis.overstrand.gov.za/newgis/rest/services/IMQS/Electricity/FeatureServer/0</item>
+        <item>BulkMeteringUnit-Private;https://gis.overstrand.gov.za/newgis/rest/services/IMQS/Electricity/FeatureServer/0</item>
+        <item>LVDistKiosk-Private;https://gis.overstrand.gov.za/newgis/rest/services/IMQS/Electricity/FeatureServer/0</item>
+        <item>LVCampPowerPoint-Private;https://gis.overstrand.gov.za/newgis/rest/services/IMQS/Electricity/FeatureServer/0</item>
+        <item>Pole-Private;https://gis.overstrand.gov.za/newgis/rest/services/IMQS/Electricity/FeatureServer/0</item>
+        <item>Joints-Private;https://gis.overstrand.gov.za/newgis/rest/services/IMQS/Electricity/FeatureServer/0</item>
+        <item>Pumpstation-Private;https://gis.overstrand.gov.za/newgis/rest/services/IMQS/Electricity/FeatureServer/0</item>
+        <item>Generator-Private;https://gis.overstrand.gov.za/newgis/rest/services/IMQS/Electricity/FeatureServer/0</item>
+        <item>MVFeeder-Private;https://gis.overstrand.gov.za/newgis/rest/services/IMQS/Electricity/FeatureServer/0</item>
+        <item>LVFeeder-Private;https://gis.overstrand.gov.za/newgis/rest/services/IMQS/Electricity/FeatureServer/0</item>
+    </string-array>
 </resources>
