@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/InsaiyanMaps.iml" filepath="$PROJECT_DIR$/InsaiyanMaps.iml" />
+      <module fileurl="file://$PROJECT_DIR$/QueryCloudFeatureService.iml" filepath="$PROJECT_DIR$/QueryCloudFeatureService.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>
