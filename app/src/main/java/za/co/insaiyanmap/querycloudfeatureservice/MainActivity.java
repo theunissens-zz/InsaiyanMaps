@@ -9,7 +9,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.esri.android.map.GraphicsLayer;
-import com.esri.android.map.GroupLayer;
 import com.esri.android.map.MapView;
 import com.esri.android.map.ags.ArcGISFeatureLayer;
 import com.esri.core.geometry.Envelope;
@@ -24,20 +23,16 @@ import com.esri.core.symbol.SimpleMarkerSymbol;
 import com.esri.core.tasks.query.QueryParameters;
 import com.esri.core.tasks.query.QueryTask;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
-import za.co.insaiyanmap.querycloudfeatureservice.objects.LayerObject;
+import za.co.insaiyanmap.querycloudfeatureservice.style.DrawingInfo;
 
 public class MainActivity extends AppCompatActivity {
 
     MenuItem mQueryMenuItem = null;
 
     MapView mMapView;
-//    ArcGISFeatureLayer streetLightFeatureLayer;
-//    ArcGISFeatureLayer slfeederFeatureLayer;
     GraphicsLayer graphicsLayer;
     private Map<String, String> mapLayers;
 
@@ -48,19 +43,6 @@ public class MainActivity extends AppCompatActivity {
 
         // Retrieve the map and initial extent from XML layout
         mMapView = (MapView) findViewById(R.id.map);
-        // Get the feature service URL from values->strings.xml
-        // Add Feature layer to the MapView
-//        streetLightFeatureLayer = new ArcGISFeatureLayer(streetLightURL, ArcGISFeatureLayer.MODE.ONDEMAND);
-//        slfeederFeatureLayer = new ArcGISFeatureLayer(SLFeederURL, ArcGISFeatureLayer.MODE.ONDEMAND);
-
-//        GroupLayer groupsLayer = new GroupLayer();
-//        groupsLayer.addLayer(streetLightFeatureLayer);
-//        groupsLayer.addLayer(slfeederFeatureLayer);
-//        mMapView.addLayer(groupsLayer);
-
-//        GroupLayer groupGraphicsLayer = new GroupLayer();
-//        groupGraphicsLayer.addLayer(streetLightGraphicsLayer);
-//        groupGraphicsLayer.addLayer(slfeederGraphicsLayer);
         graphicsLayer = new GraphicsLayer();
         mMapView.addLayer(graphicsLayer);
 
@@ -68,15 +50,17 @@ public class MainActivity extends AppCompatActivity {
         Resources res = getResources();
         String[] layers = res.getStringArray(R.array.esriLayers);
         mapLayers = new HashMap<>();
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < layers.length; i++) {
             String name = layers[i].split(";")[0];
             String url = layers[i].split(";")[1];
+
             mapLayers.put(name, url);
-//            layersObjs.add(new LayerObject(name, url));
-
             ArcGISFeatureLayer layer = new ArcGISFeatureLayer(url, ArcGISFeatureLayer.MODE.ONDEMAND);
-
             mMapView.addLayer(layer);
+
+            // Load the drawing info
+            DrawingInfo dInfo = new DrawingInfo(url);
+            String color = dInfo.getDrawingInfo();
         }
     }
 
@@ -129,56 +113,11 @@ public class MainActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
 
-//            if (params[0].equals("StreetLight")) {
-//                String whereClause = "SL_AssClass='INFRASTRUCTURE_AND_PLANNING'";
-//
-//                // Define a new query and set parameters
-//                QueryParameters mParams = new QueryParameters();
-//                mParams.setWhere(whereClause);
-//                mParams.setReturnGeometry(true);
-//
-//                // Define the new instance of QueryTask
-//                QueryTask queryTask = new QueryTask(streetLightURL);
-//                FeatureResult results;
-//
-//                try {
-//                    // run the querytask
-//                    results = queryTask.execute(mParams);
-//                    return results;
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-//            } else if (params[0].equals("SLFeeder")) {
-//                String whereClause = "SLC_AssClass='INFRASTRUCTURE_AND_PLANNING'";
-//
-//                // Define a new query and set parameters
-//                QueryParameters mParams = new QueryParameters();
-//                mParams.setWhere(whereClause);
-//                mParams.setReturnGeometry(true);
-//
-//                // Define the new instance of QueryTask
-//                QueryTask queryTask = new QueryTask(SLFeederURL);
-//                FeatureResult results;
-//
-//                try {
-//                    // run the querytask
-//                    results = queryTask.execute(mParams);
-//                    return results;
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-//            }
-
             return null;
         }
 
         @Override
         protected void onPostExecute(FeatureResult results) {
-
-            // Remove the result from previously run query task
-//            streetLightGraphicsLayer.removeAll();
-//            slfeederGraphicsLayer.removeAll();
-
             // Envelope to focus on the map extent on the results
             Envelope extent = new Envelope();
 
