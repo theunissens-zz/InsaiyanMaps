@@ -61,7 +61,7 @@ public class ProfileActivity extends AppCompatActivity {
         buttonLoadProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ProfileManager.getInstance().setProfileLoaded((ProfileDAO) profileSpinner.getSelectedItem());
+                ProfileManager.getInstance().setProfileLoaded(((ProfileDAO) profileSpinner.getSelectedItem()).getName());
                 Intent myIntent = new Intent(ProfileActivity.this, BudgeteerMainActivity.class);
                 ProfileActivity.this.startActivity(myIntent);
             }

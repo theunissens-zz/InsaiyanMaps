@@ -3,6 +3,7 @@ package za.co.insaiyan.budgeteer.data;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
@@ -14,6 +15,8 @@ public class ProfileDAO extends RealmObject {
 
     @PrimaryKey
     private String name;
+    private RealmList<FixedIncomeDAO> incomeItems;
+    private RealmList<FixedExpenseDAO> expenseItems;
 
     public ProfileDAO() {
 
@@ -29,5 +32,21 @@ public class ProfileDAO extends RealmObject {
 
     public String getName() {
         return name;
+    }
+
+    public RealmList<FixedIncomeDAO> getIncomeItems() {
+        return incomeItems;
+    }
+
+    public void setIncomeItems(RealmList<FixedIncomeDAO> incomeItems) {
+        this.incomeItems = incomeItems;
+    }
+
+    public RealmList<FixedExpenseDAO> getExpenseItems() {
+        return expenseItems;
+    }
+
+    public void setExpenseItems(RealmList<FixedExpenseDAO> expenseItems) {
+        this.expenseItems = expenseItems;
     }
 }

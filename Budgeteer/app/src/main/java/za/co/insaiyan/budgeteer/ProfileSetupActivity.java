@@ -12,7 +12,7 @@ import io.realm.Realm;
 
 public class ProfileSetupActivity extends AppCompatActivity implements ProfileNameFragment.OnFragmentInteractionListener, ProfileSetupFixedIncomeFragment.OnFragmentInteractionListener, ProfileSetupFixedExpenseFragment.OnFragmentInteractionListener {
 
-    private ProfileSetupPagerAdapater pagerAdapter;
+    private ProfileSetupPagerAdapter pagerAdapter;
 
     private ViewPager viewPager;
 
@@ -23,7 +23,7 @@ public class ProfileSetupActivity extends AppCompatActivity implements ProfileNa
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile_setup);
 
-        pagerAdapter = new ProfileSetupPagerAdapater(getSupportFragmentManager());
+        pagerAdapter = new ProfileSetupPagerAdapter(getSupportFragmentManager());
         viewPager = (ViewPager) findViewById(R.id.pager);
         viewPager.setAdapter(pagerAdapter);
     }
@@ -50,9 +50,17 @@ public class ProfileSetupActivity extends AppCompatActivity implements ProfileNa
 
     }
 
-    private class ProfileSetupPagerAdapater extends FragmentStatePagerAdapter {
-        public ProfileSetupPagerAdapater(FragmentManager fm) {
+    @Override
+    public void onProfileNameUpdated(String profileName) {
+        ProfileSetupFixedIncomeFragment profileSetupFixedIncomeFragment =  (ProfileSetupFixedIncomeFragment)pagerAdapter.getFragmentManager().getFragments().get(1);
+        profileSetupFixedIncomeFragment.update();
+    }
+
+    private class ProfileSetupPagerAdapter extends FragmentStatePagerAdapter {
+        private FragmentManager fm;
+        public ProfileSetupPagerAdapter(FragmentManager fm) {
             super(fm);
+            this.fm = fm;
         }
 
         @Override
@@ -90,6 +98,10 @@ public class ProfileSetupActivity extends AppCompatActivity implements ProfileNa
                 case 2 : return "Setup Fixed Expenses";
                 default:return"";
             }
+        }
+
+        public FragmentManager getFragmentManager() {
+            return fm;
         }
     }
 }

@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.widget.TextView;
 
 import io.realm.Realm;
+import io.realm.RealmList;
 import io.realm.RealmResults;
 import za.co.insaiyan.budgeteer.data.FixedExpenseDAO;
 import za.co.insaiyan.budgeteer.data.FixedIncomeDAO;
@@ -23,23 +24,20 @@ public class BudgeteerMainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_budgeteer_main);
 
-        ProfileDAO profile = ProfileManager.getInstance().getProfileLoaded();
-        String name = profile.getName();
+        // Load the profile
+        ProfileDAO profile = realm.where(ProfileDAO.class).equalTo("name", ProfileManager.getInstance().getProfileLoaded()).findFirst();
 
-        RealmResults<FixedIncomeDAO> incomeResults = this.realm.where(FixedIncomeDAO.class).equalTo("profileName", profile.getName()).findAll();
-//        RealmResults<FixedIncomeDAO> incomeResults = this.realm.where(FixedIncomeDAO.class).findAll();
+        RealmList<FixedIncomeDAO> incomeItems = profile.getIncomeItems();
+        RealmList<FixedExpenseDAO> expenseItems = profile.getExpenseItems();
 
         double totalIncome = 0;
-        for (int i = 0; i < incomeResults.size(); i++) {
-            totalIncome += incomeResults.get(i).getAmount();
+        for (int i = 0; i < incomeItems.size(); i++) {
+            totalIncome += incomeItems.get(i).getAmount();
         }
 
-        RealmResults<FixedExpenseDAO> expenseResults = this.realm.where(FixedExpenseDAO.class).equalTo("profileName", profile.getName()).findAll();
-//        RealmResults<FixedExpenseDAO> expenseResults = this.realm.where(FixedExpenseDAO.class).findAll();
-
         double totalExpense = 0;
-        for (int i = 0; i < expenseResults.size(); i++) {
-            totalExpense += expenseResults.get(i).getAmount();
+        for (int i = 0; i < expenseItems.size(); i++) {
+            totalExpense += expenseItems.get(i).getAmount();
         }
 
         TextView balance =  (TextView)this.findViewById(R.id.text_display_balance);

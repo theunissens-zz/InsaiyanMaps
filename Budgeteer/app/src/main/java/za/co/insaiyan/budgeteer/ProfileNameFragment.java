@@ -54,15 +54,17 @@ public class ProfileNameFragment extends Fragment {
         buttonNextProfileName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                // Add profile to database
+                ProfileNameFragment.this.realm.beginTransaction();
+                final ProfileDAO profile = ProfileNameFragment.this.realm.createObject(ProfileDAO.class);
+                profile.setName(profileName.getText().toString());
+                ProfileNameFragment.this.realm.commitTransaction();
 
-                ProfileNameFragment.this.realm.executeTransactionAsync(new Realm.Transaction() {
-                    @Override
-                    public void execute(Realm realm) {
-                        ProfileDAO profile = realm.createObject(ProfileDAO.class);
-                        profile.setName(profileName.getText().toString());
-                        ProfileManager.getInstance().setProfileLoaded(profile);
-                    }
-                });
+                // Update the profile manager with latest loaded profile name
+                ProfileManager.getInstance().setProfileLoaded(profile.getName());
+
+                // We must notify that the profile name has been updates
+                ProfileNameFragment.this.mListener.onProfileNameUpdated(profile.getName());
 
                 psActivity.incrementCount();
                 psActivity.getViewPager().setCurrentItem(psActivity.getCount(), true);
@@ -90,7 +92,6 @@ public class ProfileNameFragment extends Fragment {
     }
 
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
+        void onProfileNameUpdated(String profileName);
     }
 }

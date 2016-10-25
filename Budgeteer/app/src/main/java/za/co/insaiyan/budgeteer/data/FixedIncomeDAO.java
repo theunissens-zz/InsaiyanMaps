@@ -10,11 +10,9 @@ import io.realm.annotations.Required;
 
 public class FixedIncomeDAO extends RealmObject {
 
-    @PrimaryKey
     private String name;
     private double amount;
     private String date;
-    private String profileName;
 
     public FixedIncomeDAO() {
 
@@ -48,13 +46,5 @@ public class FixedIncomeDAO extends RealmObject {
 
     public String getDate() {
         return date;
-    }
-
-    public String getProfileName() {
-        return profileName;
-    }
-
-    public void setProfileName(String profileName) {
-        this.profileName = profileName;
     }
 }

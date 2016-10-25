@@ -67,7 +67,7 @@ public class ProfileSetupFixedExpenseFragment extends Fragment {
     private void setupRecyclerView(View view) {
         RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.list_fixed_expense);
 
-        this.adapter = new ProfileSetupFixedExpenseAdapter(this, this.realm.where(FixedExpenseDAO.class).findAllAsync());
+        this.adapter = new ProfileSetupFixedExpenseAdapter(this, ProfileManager.getInstance().getExpenseItems(this.realm));
 
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
@@ -102,12 +102,15 @@ public class ProfileSetupFixedExpenseFragment extends Fragment {
                                         ProfileSetupFixedExpenseFragment.this.realm.executeTransactionAsync(new Realm.Transaction() {
                                             @Override
                                             public void execute(Realm realm) {
+                                                // Create new expense item
                                                 FixedExpenseDAO expense = realm.createObject(FixedExpenseDAO.class);
                                                 expense.setName(fixedExpenseName.getText().toString());
                                                 String strFixedExpenseAmount = fixedExpenseAmount.getText().toString();
                                                 expense.setAmount(Double.parseDouble(strFixedExpenseAmount));
                                                 expense.setDate(fixedExpenseDate.getText().toString());
-                                                expense.setProfileName(ProfileManager.getInstance().getProfileLoaded().getName());
+                                                // Get profile to add the new expense item
+                                                ProfileDAO profile = realm.where(ProfileDAO.class).equalTo("name", ProfileManager.getInstance().getProfileLoaded()).findFirst();
+                                                profile.getExpenseItems().add(expense);
                                             }
                                         });
                                     }

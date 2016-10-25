@@ -1,4 +1,4 @@
-package za.co.insaiyan.budgeteer;
+package za.co.insaiyan.myapplication;
 
 import org.junit.Test;
 

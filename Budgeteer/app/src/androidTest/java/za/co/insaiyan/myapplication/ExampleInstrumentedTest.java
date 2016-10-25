@@ -1,4 +1,4 @@
-package za.co.insaiyan.budgeteer;
+package za.co.insaiyan.myapplication;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
-        assertEquals("za.co.insaiyan.budgeteer", appContext.getPackageName());
+        assertEquals("za.co.insaiyan.myapplication", appContext.getPackageName());
     }
 }

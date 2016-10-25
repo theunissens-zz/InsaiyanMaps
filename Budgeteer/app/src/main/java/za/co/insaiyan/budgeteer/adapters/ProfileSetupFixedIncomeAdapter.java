@@ -27,6 +27,8 @@ public class ProfileSetupFixedIncomeAdapter extends RealmRecyclerViewAdapter<Fix
         return new MyViewHolder(itemView);
     }
 
+
+
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
         FixedIncomeDAO obj = getData().get(position);

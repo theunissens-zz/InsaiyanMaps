@@ -19,6 +19,7 @@ import android.widget.EditText;
 import io.realm.Realm;
 import za.co.insaiyan.budgeteer.adapters.ProfileSetupFixedIncomeAdapter;
 import za.co.insaiyan.budgeteer.data.FixedIncomeDAO;
+import za.co.insaiyan.budgeteer.data.ProfileDAO;
 import za.co.insaiyan.budgeteer.handler.ProfileManager;
 
 public class ProfileSetupFixedIncomeFragment extends Fragment {
@@ -28,9 +29,9 @@ public class ProfileSetupFixedIncomeFragment extends Fragment {
     private Realm realm;
 
     private ProfileSetupFixedIncomeAdapter adapter;
+    private RecyclerView recyclerView;
 
     public ProfileSetupFixedIncomeFragment() {
-
     }
 
     public static ProfileSetupFixedIncomeFragment newInstance() {
@@ -41,7 +42,7 @@ public class ProfileSetupFixedIncomeFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.realm = Realm.getDefaultInstance();
+        realm = Realm.getDefaultInstance();
     }
 
     @Override
@@ -52,7 +53,6 @@ public class ProfileSetupFixedIncomeFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
         View view = inflater.inflate(R.layout.fragment_profile_setup_fixed_income, container, false);
 
         setupRecyclerView(view);
@@ -62,15 +62,17 @@ public class ProfileSetupFixedIncomeFragment extends Fragment {
         return view;
     }
 
-    private void setupRecyclerView(View view) {
-        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.list_fixed_income);
+    public void update() {
+        this.adapter = new ProfileSetupFixedIncomeAdapter(this, ProfileManager.getInstance().getIncomeItems(this.realm));
+        recyclerView.setAdapter(this.adapter);
+    }
 
-        this.adapter = new ProfileSetupFixedIncomeAdapter(this, this.realm.where(FixedIncomeDAO.class).findAllAsync());
+    private void setupRecyclerView(View view) {
+        recyclerView = (RecyclerView) view.findViewById(R.id.list_fixed_income);
 
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
-        recyclerView.setAdapter(this.adapter);
     }
 
     private void addListeners(View view) {
@@ -97,16 +99,18 @@ public class ProfileSetupFixedIncomeFragment extends Fragment {
                         .setPositiveButton("OK",
                                 new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int id) {
-                                        final String profileName = ProfileManager.getInstance().getProfileLoaded().getName();
                                         ProfileSetupFixedIncomeFragment.this.realm.executeTransactionAsync(new Realm.Transaction() {
                                             @Override
                                             public void execute(Realm realm) {
+                                                // Create new income item
                                                 FixedIncomeDAO income = realm.createObject(FixedIncomeDAO.class);
                                                 income.setName(fixedIncomeName.getText().toString());
                                                 String strFixedIncomeAmount = fixedIncomeAmount.getText().toString();
                                                 income.setAmount(Double.parseDouble(strFixedIncomeAmount));
                                                 income.setDate(fixedIncomeDate.getText().toString());
-                                                income.setProfileName(profileName);
+                                                // Get profile to add the new income item
+                                                ProfileDAO profile = realm.where(ProfileDAO.class).equalTo("name", ProfileManager.getInstance().getProfileLoaded()).findFirst();
+                                                profile.getIncomeItems().add(income);
                                             }
                                         });
                                     }
