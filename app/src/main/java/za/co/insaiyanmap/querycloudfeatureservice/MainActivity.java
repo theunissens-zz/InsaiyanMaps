@@ -26,7 +26,8 @@ import com.esri.core.tasks.query.QueryTask;
 import java.util.HashMap;
 import java.util.Map;
 
-import za.co.insaiyanmap.querycloudfeatureservice.style.DrawingInfo;
+import za.co.insaiyanmap.querycloudfeatureservice.objects.LayerObject;
+import za.co.insaiyanmap.querycloudfeatureservice.style.DrawingInfoParser;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -34,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
 
     MapView mMapView;
     GraphicsLayer graphicsLayer;
-    private Map<String, String> mapLayers;
+    private Map<String, LayerObject> mapLayers;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,13 +55,14 @@ public class MainActivity extends AppCompatActivity {
             String name = layers[i].split(";")[0];
             String url = layers[i].split(";")[1];
 
-            mapLayers.put(name, url);
+            // Load the drawing info
+            DrawingInfoParser dInfo = new DrawingInfoParser(url);
+
+            LayerObject layerObj = new LayerObject(name, url, dInfo.getGraphic());
+            mapLayers.put(name, layerObj);
+
             ArcGISFeatureLayer layer = new ArcGISFeatureLayer(url, ArcGISFeatureLayer.MODE.ONDEMAND);
             mMapView.addLayer(layer);
-
-            // Load the drawing info
-            DrawingInfo dInfo = new DrawingInfo(url);
-            String color = dInfo.getDrawingInfo();
         }
     }
 
@@ -94,7 +96,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected FeatureResult doInBackground(String... params) {
 
-            String url = mapLayers.get(params[0]);
+            LayerObject layerObj = mapLayers.get(params[0]);
 
             // Define a new query and set parameters
             QueryParameters mParams = new QueryParameters();
@@ -102,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
             mParams.setReturnGeometry(true);
 
             // Define the new instance of QueryTask
-            QueryTask queryTask = new QueryTask(url);
+            QueryTask queryTask = new QueryTask(layerObj.getUrl());
             FeatureResult results;
 
             try {
